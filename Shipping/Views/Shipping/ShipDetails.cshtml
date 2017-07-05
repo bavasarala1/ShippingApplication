@@ -1,0 +1,80 @@
+﻿@model Shipping.Models.ShippingDetails
+@{
+    ViewBag.Title = "ShipDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Order Details</h2>
+<h3>Welcome  @Html.DisplayFor(model => model.FullName)</h3>
+<hr />
+<div class="row">
+    <div class="col-sm-4">
+        <dt>Shipping Type</dt>
+
+
+        <dd>
+            @foreach (var i in Model.ShipOption)
+            {
+                @Html.RadioButton("ShipType", i.ID, new { @checked = i.Select })
+                @Html.Label(i.Name)
+                <br />
+
+            }
+        </dd>
+    </div>
+    <div class="col-sm-8">
+        <div>
+
+            <dl class="dl-horizontal">
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.OrderSubTotal)
+                </dt>
+
+                <dd id="SubTotal">@Html.DisplayFor(model => model.OrderSubTotal)</dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.SalesTax)
+                </dt>
+
+                <dd id="Tax">@Html.DisplayFor(model => model.SalesTax)</dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.ShipCharge)
+                </dt>
+
+                <dd id="Charge">@Html.DisplayFor(model => model.ShipCharge)</dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.OrderTotal)
+                </dt>
+
+                <dd id="Total">@Html.DisplayFor(model => model.OrderTotal)</dd>
+
+            </dl>
+        </div>
+    </div>
+</div>
+<div>
+    @Html.ActionLink("Order", "Index", "Shipping")
+</div>
+<script>
+    $(document).ready(function () {
+        $('input:radio[name="ShipType"]').change(function () {
+            //debugger;
+            var id = $(this).val();
+            var Subtotal = parseInt($("#SubTotal").text().trim());
+            var Tax = parseInt($("#Tax").text().trim());
+            
+          
+            var url = "/Shipping/GetCharge";
+            var name = $(this).val();
+            $.get(url, { ID: name }, function (data) {
+                
+                $("#Charge").text(data.charge.toString());
+                var Total = parseInt(data.charge) + Subtotal + Tax;
+                $("#Total").text(Total.toString());
+            });                        
+        });
+    });
+</script>
